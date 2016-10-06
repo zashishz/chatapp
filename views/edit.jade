@@ -1,0 +1,12 @@
+extends template
+
+block content
+        h1 Edit Jade Rooms:
+        form(method="post")
+          fieldset.form-group
+            label(for="name") Name:
+            input.form-control(name='name',type='text',placeholder='Enter a Meaningful Name', value="#{room.name}")
+            input(name='id',type='hidden',value="#{room.id}")
+            small.text-muted Give a Meaningful name for people to find and understand you
+          button.btn.btn-primary(type='submit') Create New
+          a.btn.btn-default(href='/admin/rooms') Cancel

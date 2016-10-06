@@ -1,0 +1,19 @@
+extends template
+
+block content
+        h1 Jade Rooms:
+        a.btn.btn-primary(href='/admin/rooms/add') Add New Chat Room
+        table.table.table-striped
+          thead
+            tr
+              th Name
+              th  id
+          tbody
+            each room in rooms
+              tr
+                td(style='width:50px'): a(href='/admin/rooms/delete/#{room.id}')
+                  span.glyphicon.glyphicon-remove
+                td=room.name
+                td=room.id
+                td(style='width:50px'): a(href='/admin/rooms/edit/#{room.id}')
+                  span.glyphicon.glyphicon-pencil
