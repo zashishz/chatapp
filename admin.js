@@ -7,49 +7,46 @@ var express = require("express");
 var router = express.Router();
 module.exports = router;
 
-router.get("/admin/rooms", (request,response)=>{
-    response.render("rooms",{
-        title:"Rooms",
+router.get("/rooms", (request, response) => {
+    response.render("rooms", {
+        title: "Rooms",
         rooms: rooms
     });
 });
 
-router.get("/admin/rooms/add", (request,response)=>{
-    response.render("add");
-});
+router.route("/rooms/add")
+    .get((request, response) => {
+        response.render("add");
+    })
+    .post((request, response) => {
+        room = {
+            name: request.body.name,
+            id: uuid.v4()
+        }
+        rooms.push(room);
+        response.redirect(request.baseUrl + '/rooms');
+    });
 
-router.post("/admin/rooms/add", (request,response)=>{
-    room = {
-        name: request.body.name,
-        id: uuid.v4()
-    }
-    rooms.push(room);
-    response.redirect('/admin/rooms');
-});
-
-router.get('/admin/rooms/delete/:id', (request,response)=>{
+router.get('/rooms/delete/:id', (request, response) => {
     rooms = rooms.filter(val => val.id !== request.params.id);
-    response.redirect('/admin/rooms');
+    response.redirect(request.baseUrl + '/rooms');
 });
 
-router.get('/admin/rooms/edit/:id', (request,response)=>{
-    var room = _.find(rooms, r=> r.id === request.params.id);
-    if(!room) {
-        response.sendStatus(404);
-    }
-    response.render('edit',{room});
-});
+router.route('/rooms/edit/:id')
+    .all(function(request, response, next){
+        let id = request.params.id;
+        var room = _.find(rooms, r => r.id === id);
+        if (!room) {
+            response.sendStatus(404);
+        }
+        response.locals.room = room;
+        next();
+    })
+    .get((request, response) => {
+        response.render('edit');
+    })
+    .post((request, response) => {
 
-router.post("/admin/rooms/edit/:id", (request,response)=>{
-    
-    id= request.params.id;
-
-    var room = _.find(rooms,r=> r.id === id);
-
-    if(!room) {
-        response.sendStatus(404);
-    }
-    
-    room.name = request.body.name;
-    response.redirect('/admin/rooms');
-});
+        response.locals.room.name = request.body.name;
+        response.redirect(request.baseUrl + '/rooms');
+    });
